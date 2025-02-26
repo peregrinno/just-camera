@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câmera Fullscreen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: black; display: flex; align-items: center; justify-content: center; }
+        video { display: none; position: absolute; width: 100vw; height: 100vh; object-fit: cover; }
+        button { position: absolute; padding: 15px 30px; font-size: 18px; z-index: 10; }
+    </style>
+</head>
+<body>
+    <button onclick="startCamera()">Ativar Câmera</button>
+    <video id="video" autoplay playsinline></video>
+
+    <script>
+        async function startCamera() {
+            const video = document.getElementById("video");
+            const button = document.querySelector("button");
+
+            try {
+                const permission = await navigator.permissions.query({ name: 'camera' });
+                
+                if (permission.state === "denied") {
+                    alert("Permissão de câmera negada. Vá nas configurações do navegador e ative a câmera para este site.");
+                    return;
+                }
+
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                video.style.display = "block"; // Exibir vídeo em tela cheia
+                button.style.display = "none"; // Esconder o botão
+
+            } catch (err) {
+                console.error("Erro ao acessar a câmera:", err);
+                alert("Erro ao acessar a câmera: " + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
