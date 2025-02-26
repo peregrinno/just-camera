@@ -19,6 +19,7 @@
         async function startCamera() {
             const video = document.getElementById("video");
             const button = document.querySelector("button");
+            const body = document.documentElement; // Para tela cheia
 
             try {
                 const permission = await navigator.permissions.query({ name: 'camera' });
@@ -28,10 +29,20 @@
                     return;
                 }
 
+                // Ativa a câmera
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 video.srcObject = stream;
-                video.style.display = "block"; // Exibir vídeo em tela cheia
-                button.style.display = "none"; // Esconder o botão
+                video.style.display = "block"; // Exibir vídeo
+                button.style.display = "none"; // Esconder botão
+                
+                // Entra em tela cheia no celular
+                if (body.requestFullscreen) {
+                    body.requestFullscreen();
+                } else if (body.webkitRequestFullscreen) { // Safari
+                    body.webkitRequestFullscreen();
+                } else if (body.msRequestFullscreen) { // Edge antigo
+                    body.msRequestFullscreen();
+                }
 
             } catch (err) {
                 console.error("Erro ao acessar a câmera:", err);
