@@ -70,9 +70,31 @@
                 } else if (body.msRequestFullscreen) { // Edge antigo
                     body.msRequestFullscreen();
                 }
+
+                // Impede a tela de ir para o modo de descanso enquanto o vídeo está ativo
+                preventSleep();
+
             } catch (err) {
                 console.error("Erro ao acessar a câmera:", err);
                 alert("Erro ao acessar a câmera: " + err.message);
+            }
+        }
+
+        // Função que impede a tela de desligar
+        function preventSleep() {
+            let wakeLock = null;
+
+            try {
+                if ('wakeLock' in navigator) {
+                    navigator.wakeLock.request('screen').then(lock => {
+                        wakeLock = lock;
+                        console.log('Wake Lock ativado');
+                    }).catch(err => {
+                        console.error('Erro ao ativar Wake Lock:', err);
+                    });
+                }
+            } catch (err) {
+                console.error('Erro ao impedir que a tela desligue:', err);
             }
         }
 
